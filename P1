@@ -1,0 +1,441 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <locale.h>
+#include <ctype.h>
+#include <time.h>
+
+// O Time deverá elaborar um Sistema de Gerenciamento de Tarefas 
+// Datas 
+typedef struct {
+
+    int dia;
+    int mes;
+    int ano;
+
+}Data; 
+
+// Tarefa
+typedef struct tarefa{
+
+    int cod_tarefa;
+    char nome[30], projeto[30];
+    Data inicio;
+    Data termino;
+    int status;
+
+}Tarefa;
+
+// No
+typedef struct Nos{
+
+    Tarefa * tarefa;
+    struct Nos* prox_tarefa;
+
+}No;
+
+// Definindo Lista
+typedef No Lista; 
+
+// Estrutura da fila, começo e final
+typedef struct Fila{
+
+    No* ini;
+    No* fim;
+
+} Fila;
+
+Fila* criaFila() 
+{
+    Fila* f = (Fila*)malloc(sizeof(Fila));
+    f->ini = f->fim = NULL;
+    return f;
+}
+
+Lista* criaLista(){
+    Lista *l = (Lista*)malloc(sizeof(Lista));
+    l->tarefa = NULL;
+    l->prox_tarefa = NULL;
+    return l;
+}
+
+Tarefa* criaTarefa ()
+{
+    Tarefa* tarefas = (Tarefa*)malloc(sizeof(Tarefa));
+
+    printf("\t\n Criacao de tarefas! ");
+
+    printf("\n Codigo da tarefa: ");
+    scanf("%d", &tarefas->cod_tarefa);
+
+    printf("\n Nome da Tarefa: ");
+    fflush(stdin);
+    gets(tarefas->nome);
+
+    printf("\n Nome do Projeto: ");
+    fflush(stdin);
+    gets(tarefas->projeto);
+
+    printf("\n Data de inicio: ");
+
+    scanf("%d", &tarefas->inicio.dia);printf(" Mes: ");
+    scanf("%d", &tarefas->inicio.mes);printf(" Ano: ");
+    scanf("%d", &tarefas->inicio.ano);
+
+    printf("\n Data de termino: ");
+    scanf("%d", &tarefas->termino.dia);printf(" Mes: ");
+    scanf("%d", &tarefas->termino.mes);printf(" Ano: ");
+    scanf("%d", &tarefas->termino.ano);
+    
+    printf(" \n Status do projeto - [1] atrasado - [0] em dia - [-1] pendente: ");
+    scanf("%d", &tarefas->status);
+
+    return tarefas;
+}
+
+Tarefa* alteraTarefa(){
+
+    int n;
+    printf("\t\n Qual deseja alterar?\n");
+
+    Tarefa* tarefas = (Tarefa*)malloc(sizeof(Tarefa));
+
+    printf("\n [01] Codigo da tarefa!");
+    printf("\n [02] Nome da Tarefa!");
+    printf("\n [03] Nome do Projeto!");
+    printf("\n [04] Data de inicio!");
+    printf("\n [05] Data de termino!");
+    printf("\n [06] Status do projeto - [1] atrasado - [0] em dia - [-1] pendente!");
+
+    scanf("%d",&n);
+
+    switch (n){
+
+        case 1:
+            printf("\n Codigo da tarefa: ");
+            scanf("%d", &tarefas->cod_tarefa);
+        break;
+
+        case 2: 
+            printf("\n Nome da Tarefa: ");
+            fflush(stdin);
+            gets(tarefas->nome);
+        break;
+
+        case 3:
+            printf("\n Nome do Projeto: ");
+            fflush(stdin);
+            gets(tarefas->projeto);
+        break;
+
+        case 4: 
+            printf("\n Data de inicio: ");
+            scanf("%d", &tarefas->inicio.dia);printf(" Mes: ");
+            scanf("%d", &tarefas->inicio.mes);printf(" Ano: ");
+            scanf("%d", &tarefas->inicio.ano);
+        break;
+
+        case 5:
+            printf("\n Data de termino: ");
+            scanf("%d", &tarefas->termino.dia);printf(" Mes: ");
+            scanf("%d", &tarefas->termino.mes);printf(" Ano: ");
+            scanf("%d", &tarefas->termino.ano);
+        break;
+        
+        case 6:
+            printf(" \n Status do projeto - [1] atrasado - [0] em dia - [-1] pendente: ");
+            scanf("%d", &tarefas->status);
+        break;
+
+        default:
+            printf("\n\n ERRO:  Digite de 1 a 6!");
+        break;
+    }
+    return tarefas;   
+}
+
+void insereFila_tarefa (Fila* f, Tarefa* tarefa){
+
+    No* nova_tarefa = (No*) malloc(sizeof(No));
+
+    nova_tarefa->tarefa = tarefa;
+    nova_tarefa->prox_tarefa = NULL;
+
+    if (f->ini == NULL) {
+        f->ini = f->fim = nova_tarefa;
+    } else {
+        f->fim->prox_tarefa = nova_tarefa;
+        f->fim = nova_tarefa;
+    }
+}
+
+void imprime_tarefa (Tarefa* T){
+
+    printf("\n\n");
+    printf("\t\n Codigo da tarefa: %d", T->cod_tarefa);
+    printf("\t\n Nome da Tarefa: %s", T->nome);
+    printf("\t\n Nome do Projeto: %s", T->projeto);
+    printf("\t\n Data de inicio: %02d / %02d / %04d ", T->inicio.dia, T->inicio.mes, T->inicio.ano);
+    printf("\t\n Data de Termino: %02d / %02d / %04d", T->termino.dia, T->termino.mes, T->termino.ano);
+    printf("\t\n Status do projeto - [1] atrasado - [0] em dia - [-1] pendente: %d ", T->status);
+ 
+}
+
+void imprime_tarefa_concluida (Tarefa* T){
+    
+    time_t tempoAtual;
+    struct tm *infoTempo;
+
+    // Obtém o tempo atual
+    time(&tempoAtual);
+    
+    // Converte o tempo atual em uma estrutura de informações de tempo local
+    infoTempo = localtime(&tempoAtual);
+
+    // Obtém o dia, mês e ano do tempo atual
+    int dia = infoTempo->tm_mday;
+    int mes = infoTempo->tm_mon + 1;  // O mês é baseado em zero, então adicionamos 1
+    int ano = infoTempo->tm_year + 1900;  // O ano começa em 1900
+
+    printf("\n\n");
+    printf("\t\n Codigo da tarefa: %d", T->cod_tarefa);
+    printf("\t\n Nome da Tarefa: %s", T->nome);
+    printf("\t\n Nome do Projeto: %s", T->projeto);
+    printf("\t\n Data de inicio: %02d / %02d / %04d ", T->inicio.dia, T->inicio.mes, T->inicio.ano);
+    printf("\t\n Data de Termino: %02d / %02d / %04d", dia, mes, ano);
+    printf("\t\n Status do projeto - [1] atrasado - [0] em dia - [-1] pendente: %d ", T->status);
+
+}
+
+void imprime_fila(Fila* F) {
+    No* aux = F->ini;
+
+    while (aux != NULL) {
+        imprime_tarefa(aux->tarefa);
+        aux = aux->prox_tarefa;
+    }
+}
+
+void imprime_lista(Lista* pendente)
+{
+    No* aux = pendente;
+
+    while (aux != NULL) {
+        imprime_tarefa(aux->tarefa);
+        aux = aux->prox_tarefa;
+    }
+}
+
+void imprime_lista_concluida(Lista* L)
+{
+    No* aux = L;
+
+    while (aux != NULL) {
+
+        imprime_tarefa_concluida(aux->tarefa);
+        aux = aux->prox_tarefa;
+    }
+}
+
+void modificarTarefa(Fila* f) {
+
+    int codigo;
+    printf("\nDigite o codigo da tarefa que deseja modificar: ");
+    scanf("%d", &codigo);
+
+    No* aux = f->ini;
+
+    while (aux != NULL) {
+        if (aux->tarefa->cod_tarefa == codigo) {
+            printf("\nTarefa encontrada. Digite os novos dados da tarefa:\n");
+            
+            aux->tarefa = alteraTarefa();
+
+            printf("\nTarefa modificada com sucesso!\n");
+            return;
+        }
+        aux = aux->prox_tarefa;
+    }
+
+    printf("\nTarefa com codigo %d nao encontrada.\n", codigo);
+}
+
+void joga_para_lista(Fila* f, Lista* L)
+{
+    No* anterior = NULL;
+    No* atual = f->ini;
+
+    while (atual != NULL) {
+        
+            // Remova a tarefa da fila mantendo a estrutura da fila intacta
+            if (anterior == NULL) {
+                f->ini = atual->prox_tarefa;
+            } else {
+                anterior->prox_tarefa = atual->prox_tarefa;
+            }
+
+            // Insira a tarefa concluída na lista encadeada de tarefas concluídas
+            // Certifique-se de manter a ordem com base na data de término
+            No* novoNo = (No*)malloc(sizeof(No));
+            novoNo->tarefa = atual->tarefa;
+            novoNo->prox_tarefa = NULL;
+
+            if (L->tarefa == NULL) {
+                L->tarefa = novoNo->tarefa;
+                L->prox_tarefa = NULL;
+            } else {
+                No* aux = L;
+                No* anterior = NULL;
+
+                while (aux != NULL && novoNo->tarefa->termino.ano > aux->tarefa->termino.ano) {
+                    anterior = aux;
+                    aux = aux->prox_tarefa;
+                }
+                while (aux != NULL && novoNo->tarefa->termino.ano == aux->tarefa->termino.ano &&
+                    novoNo->tarefa->termino.mes > aux->tarefa->termino.mes) {
+                    anterior = aux;
+                    aux = aux->prox_tarefa;
+                }
+                while (aux != NULL && novoNo->tarefa->termino.ano == aux->tarefa->termino.ano &&
+                       novoNo->tarefa->termino.mes == aux->tarefa->termino.mes &&
+                       novoNo->tarefa->termino.dia > aux->tarefa->termino.dia) {
+                    anterior = aux;
+                    aux = aux->prox_tarefa;
+                }
+
+                if (anterior == NULL) {
+                    
+                    novoNo->prox_tarefa = L;
+                    L->tarefa = novoNo->tarefa;
+                    L->prox_tarefa = aux;
+                } else {
+                    anterior->prox_tarefa = novoNo;
+                    novoNo->prox_tarefa = aux;
+                }
+            }
+
+            printf("\n\n Tarefa concluda com sucesso!\n");
+            return;
+        }
+        anterior = atual;
+        atual = atual->prox_tarefa;
+    }
+
+void concluirTarefa(Fila* f, Lista* concluido) {
+
+    int codigo;
+    printf("\nDigite o codigo da tarefa que deseja concluir: ");
+    scanf("%d", &codigo);
+
+    if(f->ini->tarefa->cod_tarefa == codigo)
+    {
+        joga_para_lista(f, concluido);
+        concluido->tarefa->status = 2;
+    }
+    else
+    printf("\nTarefa com codigo %d nao encontrada.\n", codigo);
+}
+
+void atualizacao_status(Fila* f, Lista* pendente)
+{
+    time_t tempoAtual;
+    struct tm *infoTempo;
+
+    // Obtém o tempo atual
+    time(&tempoAtual);
+    
+    // Converte o tempo atual em uma estrutura de informações de tempo local
+    infoTempo = localtime(&tempoAtual);
+
+    // Obtém o dia, mês e ano do tempo atual
+    int dia = infoTempo->tm_mday;
+    int mes = infoTempo->tm_mon + 1;  // O mês é baseado em zero, então adicionamos 1
+    int ano = infoTempo->tm_year + 1900;  // O ano começa em 1900
+
+    No* aux = f->ini;
+
+    while (aux != NULL)
+    {
+        if(ano > aux->tarefa->termino.ano)
+        {
+            aux->tarefa->status = 1;
+            joga_para_lista(f, pendente);
+        }
+
+        if(mes > aux->tarefa->termino.mes)
+        {
+            aux->tarefa->status = 1;
+            joga_para_lista(f,pendente);
+        }
+        if(dia > aux->tarefa->termino.dia)
+        {
+            aux->tarefa->status = 1;
+            joga_para_lista(f,pendente);
+        }
+
+        aux = aux->prox_tarefa;
+    }
+}
+
+int main()
+{ 
+    Fila* f = NULL;
+    Lista* concluida = NULL;
+    Lista* pendente = NULL;
+    char resp, resp2 = 'S', resp3 = 'S';
+
+    pendente = criaLista();
+    concluida = criaLista();
+    f = criaFila();
+
+    Tarefa* Tar = (Tarefa*)malloc(sizeof(Tarefa));
+        
+    do{ 
+        
+        Tar = criaTarefa();
+        insereFila_tarefa(f, Tar);
+        printf("\t\n Deseja criar uma nova tarefa? [S] sim / [N] nao: ");
+        fflush(stdin);
+        resp = getchar();
+        
+    }while(toupper(resp)!='N');
+
+    system("cls");
+    
+    while(toupper(resp2)=='S'){
+        
+        printf("\t\n\n Deseja alterar alguma tarefa? [S] sim / [N] nao: ");
+        fflush(stdin);
+        resp2 = getchar();
+
+        if (toupper(resp2) == 'S') {
+        modificarTarefa(f);
+        }
+    }
+
+    system("cls");
+
+    while(toupper(resp3)=='S'){
+        
+        printf("\t\n\n Deseja concluir alguma tarefa? [S] sim / [N] nao: ");
+        fflush(stdin);
+        resp3 = getchar();
+
+        if (toupper(resp3) == 'S') {
+        concluirTarefa(f, concluida);
+        }
+    }
+
+
+    imprime_lista_concluida(concluida);
+    
+    atualizacao_status(f, pendente);
+
+    imprime_lista_concluida (pendente);
+
+
+    free(f);
+    free(concluida);
+    free(pendente);
+
+    return 0;
+}
