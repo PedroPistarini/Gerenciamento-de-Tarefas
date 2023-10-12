@@ -44,6 +44,14 @@ typedef struct Fila{
 
 } Fila;
 
+void enter_continua()
+{
+    printf("\n\nPressione Enter para continuar...");
+    fflush(stdin);
+    getchar();
+    system("cls");
+}
+
 Fila* criaFila() 
 {
     Fila* f = (Fila*)malloc(sizeof(Fila));
@@ -95,7 +103,6 @@ Tarefa* criaTarefa ()
 Tarefa* alteraTarefa(){
 
     int n;
-    printf("\t\n Qual deseja alterar?\n");
 
     Tarefa* tarefas = (Tarefa*)malloc(sizeof(Tarefa));
 
@@ -106,8 +113,11 @@ Tarefa* alteraTarefa(){
     printf("\n [05] Data de termino!");
     printf("\n [06] Status do projeto - [1] atrasado - [0] em dia - [-1] pendente!");
 
-    scanf("%d",&n);
-
+    do{ 
+        printf("\t\n\n Qual deseja alterar:  ");
+        scanf("%d",&n);
+    } while (n < 1 || n > 6);
+    
     switch (n){
 
         case 1:
@@ -202,7 +212,7 @@ void imprime_tarefa_concluida (Tarefa* T){
     printf("\t\n Nome do Projeto: %s", T->projeto);
     printf("\t\n Data de inicio: %02d / %02d / %04d ", T->inicio.dia, T->inicio.mes, T->inicio.ano);
     printf("\t\n Data de Termino: %02d / %02d / %04d", dia, mes, ano);
-    printf("\t\n Status do projeto - [1] atrasado - [0] em dia - [-1] pendente: %d ", T->status);
+    printf("\t\n Status do projeto - [1] atrasado - [0] em dia - [-1] pendente [2] Concluida: %d ", 2);
 
 }
 
@@ -236,6 +246,57 @@ void imprime_lista_concluida(Lista* L)
     }
 }
 
+void imprime_lista_com_sem_atraso(Lista* concluido)
+{
+    No* aux = concluido;    
+}
+
+void impressao_de_listas(Lista* concluido, Lista* pendente)
+{
+    int n;
+    
+    printf("\n\n Impressao de Listas\n");
+    
+    printf("\n[1] Lista de Tarefas Pendentes!");
+    printf("\n[2] Lista de Tarefas Concluidas!");
+    printf("\n[3] Lista de Tarefas Concluidas com ou sem atraso");
+    pritnf("\n[4] Imprimir todas as listas!");
+
+    do{
+    printf("\nQual deseja imprimir ->");
+    scanf("%d", &n);
+    }while(n < 1 || n > 3);
+
+    switch(n)
+    {
+        case 1: 
+            imprime_lista(pendente);
+        break;
+
+        case 2: 
+            imprime_lista_concluida(concluido);
+        break;
+
+        case 3: 
+            imprime_lista_com_sem_atraso(concluido);
+        break;
+
+        case 4:
+            printf("\n\n Lista Pendente ->");
+            imprime_lista(pendente);
+
+            printf("\n Lista Concluida -> ");
+            imprime_lista_concluida(concluido);
+
+            printf("\n\n Lista Concluida Com ou sem Atraso -> ");
+
+        break;
+
+        default:
+        break;
+    }
+}
+
 void modificarTarefa(Fila* f) {
 
     int codigo;
@@ -251,12 +312,15 @@ void modificarTarefa(Fila* f) {
             aux->tarefa = alteraTarefa();
 
             printf("\nTarefa modificada com sucesso!\n");
-            return;
+        }
+        else{
+            printf("\nTarefa com codigo %d nao encontrada.\n", codigo);
         }
         aux = aux->prox_tarefa;
     }
 
-    printf("\nTarefa com codigo %d nao encontrada.\n", codigo);
+    
+    
 }
 
 void joga_para_lista(Fila* f, Lista* L)
@@ -264,61 +328,56 @@ void joga_para_lista(Fila* f, Lista* L)
     No* anterior = NULL;
     No* atual = f->ini;
 
-    while (atual != NULL) {
         
-            // Remova a tarefa da fila mantendo a estrutura da fila intacta
-            if (anterior == NULL) {
-                f->ini = atual->prox_tarefa;
-            } else {
-                anterior->prox_tarefa = atual->prox_tarefa;
-            }
-
-            // Insira a tarefa concluída na lista encadeada de tarefas concluídas
-            // Certifique-se de manter a ordem com base na data de término
-            No* novoNo = (No*)malloc(sizeof(No));
-            novoNo->tarefa = atual->tarefa;
-            novoNo->prox_tarefa = NULL;
-
-            if (L->tarefa == NULL) {
-                L->tarefa = novoNo->tarefa;
-                L->prox_tarefa = NULL;
-            } else {
-                No* aux = L;
-                No* anterior = NULL;
-
-                while (aux != NULL && novoNo->tarefa->termino.ano > aux->tarefa->termino.ano) {
-                    anterior = aux;
-                    aux = aux->prox_tarefa;
-                }
-                while (aux != NULL && novoNo->tarefa->termino.ano == aux->tarefa->termino.ano &&
-                    novoNo->tarefa->termino.mes > aux->tarefa->termino.mes) {
-                    anterior = aux;
-                    aux = aux->prox_tarefa;
-                }
-                while (aux != NULL && novoNo->tarefa->termino.ano == aux->tarefa->termino.ano &&
-                       novoNo->tarefa->termino.mes == aux->tarefa->termino.mes &&
-                       novoNo->tarefa->termino.dia > aux->tarefa->termino.dia) {
-                    anterior = aux;
-                    aux = aux->prox_tarefa;
-                }
-
-                if (anterior == NULL) {
-                    
-                    novoNo->prox_tarefa = L;
-                    L->tarefa = novoNo->tarefa;
-                    L->prox_tarefa = aux;
-                } else {
-                    anterior->prox_tarefa = novoNo;
-                    novoNo->prox_tarefa = aux;
-                }
-            }
-
-            printf("\n\n Tarefa concluda com sucesso!\n");
-            return;
+        // Remova a tarefa da fila mantendo a estrutura da fila intacta
+        if (anterior == NULL) {
+            f->ini = atual->prox_tarefa;
+        } else {
+            anterior->prox_tarefa = atual->prox_tarefa;
         }
-        anterior = atual;
-        atual = atual->prox_tarefa;
-    }
+
+        // Insira a tarefa concluída na lista encadeada de tarefas concluídas
+        // Certifique-se de manter a ordem com base na data de término
+        No* novoNo = (No*)malloc(sizeof(No));
+        novoNo->tarefa = atual->tarefa;
+        novoNo->prox_tarefa = NULL;
+
+        if (L->tarefa == NULL) {
+            L->tarefa = novoNo->tarefa;
+            L->prox_tarefa = NULL;
+        } else {
+            No* aux = L;
+            No* anterior = NULL;
+
+            while (aux != NULL && novoNo->tarefa->termino.ano > aux->tarefa->termino.ano) {
+                anterior = aux;
+                aux = aux->prox_tarefa;
+            }
+            while (aux != NULL && novoNo->tarefa->termino.ano == aux->tarefa->termino.ano &&
+                novoNo->tarefa->termino.mes > aux->tarefa->termino.mes) {
+                anterior = aux;
+                aux = aux->prox_tarefa;
+            }
+            while (aux != NULL && novoNo->tarefa->termino.ano == aux->tarefa->termino.ano &&
+                    novoNo->tarefa->termino.mes == aux->tarefa->termino.mes &&
+                    novoNo->tarefa->termino.dia > aux->tarefa->termino.dia) {
+                anterior = aux;
+                aux = aux->prox_tarefa;
+            }
+
+            if (anterior == NULL) {
+                
+                novoNo->prox_tarefa = L;
+                L->tarefa = novoNo->tarefa;
+                L->prox_tarefa = aux;
+            } else {
+                anterior->prox_tarefa = novoNo;
+                novoNo->prox_tarefa = aux;
+            }
+        }
+
+    
+}
 
 void concluirTarefa(Fila* f, Lista* concluido) {
 
@@ -329,7 +388,8 @@ void concluirTarefa(Fila* f, Lista* concluido) {
     if(f->ini->tarefa->cod_tarefa == codigo)
     {
         joga_para_lista(f, concluido);
-        concluido->tarefa->status = 2;
+        //concluido->tarefa->status = 2;
+        printf("\n\n Tarefa concluida com sucesso!\n");
     }
     else
     printf("\nTarefa com codigo %d nao encontrada.\n", codigo);
@@ -355,21 +415,11 @@ void atualizacao_status(Fila* f, Lista* pendente)
 
     while (aux != NULL)
     {
-        if(ano > aux->tarefa->termino.ano)
+        if(ano > aux->tarefa->termino.ano || mes > aux->tarefa->termino.mes || dia > aux->tarefa->termino.dia) 
         {
-            aux->tarefa->status = 1;
+            aux->tarefa->status = -1;
             joga_para_lista(f, pendente);
-        }
-
-        if(mes > aux->tarefa->termino.mes)
-        {
-            aux->tarefa->status = 1;
-            joga_para_lista(f,pendente);
-        }
-        if(dia > aux->tarefa->termino.dia)
-        {
-            aux->tarefa->status = 1;
-            joga_para_lista(f,pendente);
+            printf("\n\n Status Atualizado com Sucesso! ");
         }
 
         aux = aux->prox_tarefa;
@@ -396,6 +446,8 @@ int main()
         printf("\t\n Deseja criar uma nova tarefa? [S] sim / [N] nao: ");
         fflush(stdin);
         resp = getchar();
+        system("cls");
+        printf("\t\n =============== Crie uma nova Tarefa!! ================\n\n");
         
     }while(toupper(resp)!='N');
 
@@ -403,17 +455,18 @@ int main()
     
     while(toupper(resp2)=='S'){
         
+        printf("\t\n\n ============== Alteracao de Tarefas ==============\n\n");
         printf("\t\n\n Deseja alterar alguma tarefa? [S] sim / [N] nao: ");
         fflush(stdin);
         resp2 = getchar();
 
         if (toupper(resp2) == 'S') {
         modificarTarefa(f);
-        }
+        }   
     }
 
-    system("cls");
-
+    enter_continua();
+    
     while(toupper(resp3)=='S'){
         
         printf("\t\n\n Deseja concluir alguma tarefa? [S] sim / [N] nao: ");
@@ -425,14 +478,15 @@ int main()
         }
     }
 
+    //imprime_lista_concluida(concluida);
 
-    imprime_lista_concluida(concluida);
-    
     atualizacao_status(f, pendente);
 
-    imprime_lista_concluida (pendente);
+    //imprime_lista(pendente);
 
+    impressao_de_listas(concluida, pendente);
 
+    free(Tar);
     free(f);
     free(concluida);
     free(pendente);
