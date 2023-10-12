@@ -260,7 +260,7 @@ void impressao_de_listas(Lista* concluido, Lista* pendente)
     printf("\n[1] Lista de Tarefas Pendentes!");
     printf("\n[2] Lista de Tarefas Concluidas!");
     printf("\n[3] Lista de Tarefas Concluidas com ou sem atraso");
-    pritnf("\n[4] Imprimir todas as listas!");
+    printf("\n[4] Imprimir todas as listas!");
 
     do{
     printf("\nQual deseja imprimir ->");
