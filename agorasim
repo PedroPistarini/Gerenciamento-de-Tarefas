@@ -100,11 +100,9 @@ Tarefa* criaTarefa ()
     return tarefas;
 }
 
-Tarefa* alteraTarefa(){
+void alteraTarefa(Tarefa* tarefas){
 
     int n;
-
-    Tarefa* tarefas = (Tarefa*)malloc(sizeof(Tarefa));
 
     printf("\n [01] Codigo da tarefa!");
     printf("\n [02] Nome da Tarefa!");
@@ -307,20 +305,20 @@ void modificarTarefa(Fila* f) {
 
     while (aux != NULL) {
         if (aux->tarefa->cod_tarefa == codigo) {
-            printf("\n Tarefa encontrada. Digite os novos dados da tarefa:\n");
+            printf("\nTarefa encontrada. Digite os novos dados da tarefa:\n");
             
-            aux->tarefa = alteraTarefa();
+            alteraTarefa(aux->tarefa);
 
-            printf("\n Tarefa modificada com sucesso!\n");
-            enter_continua();
+            printf("\nTarefa modificada com sucesso!\n");
         }
         else{
-            printf("\n Tarefa com codigo %d nao encontrada.\n", codigo);
-            enter_continua();
+            printf("\nTarefa com codigo %d nao encontrada.\n", codigo);
         }
         aux = aux->prox_tarefa;
-        
-    } 
+    }
+
+    
+    
 }
 
 void joga_para_lista(Fila* f, Lista* L)
@@ -455,7 +453,7 @@ int main()
     
     while(toupper(resp2)=='S'){
         
-        printf("\t\n\n ============== Alteracao de Tarefas ==============\n\n");
+        printf("\t\n\n ============== Alteracao de Tarefas ==============\n");
         printf("\t\n\n Deseja alterar alguma tarefa? [S] sim / [N] nao: ");
         fflush(stdin);
         resp2 = getchar();
