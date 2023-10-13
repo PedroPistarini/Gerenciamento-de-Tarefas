@@ -157,8 +157,7 @@ void alteraTarefa(Tarefa* tarefas){
         default:
             printf("\n\n ERRO:  Digite de 1 a 6!");
         break;
-    }
-    return tarefas;   
+    } 
 }
 
 void insereFila_tarefa (Fila* f, Tarefa* tarefa){
@@ -244,9 +243,25 @@ void imprime_lista_concluida(Lista* L)
     }
 }
 
-void imprime_lista_com_sem_atraso(Lista* concluido)
+void imprime_com_sem_atraso(Lista* concluido)
 {
-    No* aux = concluido;    
+    No* aux = concluido;
+
+    while (aux != NULL)
+    {
+        if(aux->tarefa->status == 1)
+        {
+            printf("\n\n Tarefa com atraso -> ");
+            imprime_tarefa_concluida(aux->tarefa);
+        }
+        else
+        {
+            printf("\n\n\n Tarefa sem atraso -> ");
+            imprime_tarefa_concluida(aux->tarefa);
+        }
+
+        aux = aux->prox_tarefa;
+    }   
 }
 
 void impressao_de_listas(Lista* concluido, Lista* pendente)
@@ -276,7 +291,7 @@ void impressao_de_listas(Lista* concluido, Lista* pendente)
         break;
 
         case 3: 
-            imprime_lista_com_sem_atraso(concluido);
+            imprime_com_sem_atraso(concluido);
         break;
 
         case 4:
@@ -287,6 +302,7 @@ void impressao_de_listas(Lista* concluido, Lista* pendente)
             imprime_lista_concluida(concluido);
 
             printf("\n\n Lista Concluida Com ou sem Atraso -> ");
+            imprime_com_sem_atraso(concluido);
 
         break;
 
