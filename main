@@ -1,0 +1,97 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <locale.h>
+#include <ctype.h>
+#include <time.h>
+#include "biblioteca.h"
+
+void menu (int *n)
+{   
+    printf(" <<< Gerenciamento de Tarefas >>>\n\n");
+    
+    printf("\n [01] Cria Tarefa!");
+    printf("\n [02] Altera Tarefa!");
+    printf("\n [03] Concluir Tarefa!");
+    printf("\n [04] Atualiza status de tarefas atrasada! ");
+    printf("\n [05] Impressao de listas! ");
+    printf("\n [06] Encerra Programa!");
+
+    printf("\n\n Digite qual deseja realizar: ");
+    scanf("%d", n);
+}
+
+int main()
+{ 
+    Fila* f = NULL;
+    Lista* concluida = NULL;
+    Lista* pendente = NULL;
+    int n;
+
+    pendente = criaLista();
+    concluida = criaLista();
+    f = criaFila();
+
+    Tarefa* Tar = (Tarefa*)malloc(sizeof(Tarefa));
+        
+    menu(&n);
+
+    while(n >= 1 || n <= 6)
+    {
+        switch(n)
+        {
+            case 1: 
+                system("cls");
+                Tar = criaTarefa();
+                insereFila_tarefa(f, Tar);
+                enter_continua();
+                menu(&n);
+            break;
+
+            case 2: 
+
+                system("cls");
+                printf("\t\n\n ============== Alteracao de Tarefas ==============\n");
+                modificarTarefa(f);
+
+                enter_continua();
+                menu(&n);
+
+            break;
+
+            case 3:
+
+                system("cls");
+                printf("\n\n =============== Concluindo Tarefas ===============\n\n");
+            
+                concluirTarefa(f, concluida);
+                enter_continua();
+                menu(&n);
+
+            break;
+
+            case 4: 
+                system("cls");
+                atualizacao_status(f, pendente);
+                menu(&n);
+            break;
+
+            case 5:
+                system("cls");
+                impressao_de_listas(concluida, pendente);
+
+                enter_continua();
+                menu(&n);
+            break;
+
+            default:
+                printf(" Programa encerrado! ");
+                free(Tar);
+                free(f);
+                free(concluida);
+                free(pendente);
+
+                return 0;
+            break;
+        }
+    }  
+}
